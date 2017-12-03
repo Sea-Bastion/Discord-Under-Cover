@@ -1,5 +1,6 @@
 package DiscordUnderCover;
 
+import bots.JDAAddon.CJDA;
 import bots.JDAAddon.Input;
 import javafx.application.Application;
 import javafx.beans.property.DoubleProperty;
@@ -29,7 +30,7 @@ import java.util.ResourceBundle;
 public class Main extends Application {
 
 	//---------------------------------class vars---------------------------------
-	private JDA bot; //user bot
+	private CJDA bot; //user bot
 	private Input input;
 	private Stage PrimareStage;
 
@@ -44,7 +45,7 @@ public class Main extends Application {
 
 			//try to make the bot
 			try {
-				bot = new CJDABuilder(AccountType.CLIENT).setToken(token).buildBlocking(input);
+				bot = new CJDABuilder(AccountType.CLIENT).setToken(token).buildBlocking();
 
 			//if you fail to make the bot
 			} catch (LoginException | InterruptedException | RateLimitedException e) {
@@ -55,6 +56,8 @@ public class Main extends Application {
 
 		//set to reconnect
 		bot.setAutoReconnect(true);
+
+		input = bot.getInput();
 
 
 	}
