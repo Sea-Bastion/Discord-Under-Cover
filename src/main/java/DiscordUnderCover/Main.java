@@ -1,6 +1,7 @@
 package DiscordUnderCover;
 
 import bots.JDAAddon.CJDA;
+import bots.JDAAddon.CJDABuilder;
 import bots.JDAAddon.Input;
 import javafx.application.Application;
 import javafx.fxml.FXML;
@@ -14,12 +15,10 @@ import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.exceptions.RateLimitedException;
 
 import javax.security.auth.login.LoginException;
-
-import static bots.JDAAddon.CJDABuilder.*;
-import bots.JDAAddon.CJDABuilder;
-
 import java.net.URL;
 import java.util.ResourceBundle;
+
+import static bots.JDAAddon.CJDABuilder.*;
 
 
 public class Main extends Application {
@@ -74,7 +73,7 @@ public class Main extends Application {
 
 		PrimaryStage.setTitle("terminal");
 		PrimaryStage.setResizable(true);
-		PrimaryStage.setHeight(150);
+		PrimaryStage.setHeight(100);
 		PrimaryStage.setWidth(500);
 
 		FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("Main.fxml"));
@@ -103,12 +102,17 @@ public class Main extends Application {
 
 			String msg = TextBox.getText();
 
-			while(!msg.isEmpty() && msg.substring(msg.length()-1).equals("\n")){
-				msg = msg.substring(0, msg.length()-1);
-			}
+			if(!msg.isEmpty()) {
 
-			input.send(msg);
-			TextBox.clear();
+				while (msg.endsWith("\n"))
+					msg = msg.substring(0, msg.length() - 1);
+
+				while (msg.startsWith("\n"))
+					msg = msg.substring(1);
+
+					input.send(msg);
+				TextBox.clear();
+			}
 
 		}
 
