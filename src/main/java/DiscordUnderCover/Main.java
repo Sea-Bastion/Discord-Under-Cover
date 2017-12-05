@@ -3,24 +3,19 @@ package DiscordUnderCover;
 import bots.JDAAddon.CJDA;
 import bots.JDAAddon.Input;
 import javafx.application.Application;
-import javafx.beans.property.DoubleProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 import net.dv8tion.jda.core.AccountType;
-import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.exceptions.RateLimitedException;
 
 import javax.security.auth.login.LoginException;
 
-import static bots.JDAAddon.CJDABuilder.getDiscordFile;
-import static bots.JDAAddon.CJDABuilder.getToken;
+import static bots.JDAAddon.CJDABuilder.*;
 import bots.JDAAddon.CJDABuilder;
 
 import java.net.URL;
@@ -32,24 +27,31 @@ public class Main extends Application {
 	//---------------------------------class vars---------------------------------
 	private CJDA bot; //user bot
 	private Input input;
-	private Stage PrimareStage;
+	private Stage PrimaryStage;
+	private Controller controller;
+	private String DiscordStore = getDiscordFile() + "/UnderCover/vars.properties";
+	private boolean loaded = false;
 
 	//---------------------------------init---------------------------------
 	public Main(){
 
 		//get token from database
-		String token = getToken(getDiscordFile() + "/UnderCover/vars.properties");
+		String token = getToken(DiscordStore);
 
 		//make bot until it's made
 		while (bot == null) {
 
 			//try to make the bot
 			try {
-				bot = new CJDABuilder(AccountType.CLIENT).setToken(token).buildBlocking();
+				bot = new CJDABuilder(AccountType.CLIENT).addMessageHandlers(this::MessageIncome).setToken(token).buildBlocking();
 
-			//if you fail to make the bot
-			} catch (LoginException | InterruptedException | RateLimitedException e) {
-				e.printStackTrace();
+				//if you fail to make the bot
+			}catch (LoginException e){
+				RefreshToken(DiscordStore);
+
+
+			} catch (InterruptedException | RateLimitedException e) {
+				System.err.println("unable to connect to discord retrying");
 
 			}
 		}
@@ -62,20 +64,25 @@ public class Main extends Application {
 
 	}
 
+	public void MessageIncome(String msg){
+		System.out.println(msg);
+	}
+
 	@Override
 	public void start(Stage stage) throws Exception {
-		PrimareStage = stage;
+		PrimaryStage = stage;
 
-		PrimareStage.setTitle("terminal");
-		PrimareStage.setResizable(true);
-		PrimareStage.setHeight(400);
-		PrimareStage.setWidth(500);
+		PrimaryStage.setTitle("terminal");
+		PrimaryStage.setResizable(true);
+		PrimaryStage.setHeight(150);
+		PrimaryStage.setWidth(500);
 
 		FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("Main.fxml"));
-		loader.setController(new Controller());
+		loader.setController(controller = new Controller());
 
-		PrimareStage.setScene(loader.load());
-		PrimareStage.show();
+		PrimaryStage.setScene(loader.load());
+		loaded = true;
+		PrimaryStage.show();
 
 	}
 
@@ -88,8 +95,6 @@ public class Main extends Application {
 
 		@FXML
 		TextArea TextBox;
-		@FXML
-		TextArea MessageBox;
 
 
 		boolean shift = false;
@@ -133,14 +138,12 @@ public class Main extends Application {
 			TextBox.setOnKeyPressed(this::press);
 			TextBox.setOnKeyReleased(this::release);
 
-			PrimareStage.widthProperty().addListener(e -> {
-				TextBox.setPrefWidth(PrimareStage.getWidth());
-				MessageBox.setPrefWidth(PrimareStage.getWidth());
+			PrimaryStage.widthProperty().addListener(e -> {
+				TextBox.setPrefWidth(PrimaryStage.getWidth());
 			});
 
-			PrimareStage.heightProperty().addListener(e -> {
-				TextBox.setPrefHeight(PrimareStage.getHeight() * 0.2);
-				MessageBox.setPrefHeight(PrimareStage.getHeight() * 0.8);
+			PrimaryStage.heightProperty().addListener(e -> {
+				TextBox.setPrefHeight(PrimaryStage.getHeight());
 			});
 		}
 	}
