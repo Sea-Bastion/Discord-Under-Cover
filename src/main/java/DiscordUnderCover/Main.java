@@ -27,15 +27,13 @@ public class Main extends Application {
 	private CJDA bot; //user bot
 	private Input input;
 	private Stage PrimaryStage;
-	private Controller controller;
-	private String DiscordStore = getDiscordFile() + "/UnderCover/vars.properties";
-	private boolean loaded = false;
 
 	//---------------------------------init---------------------------------
 	public Main(){
 
-		//get token from database
-		String token = getToken(DiscordStore);
+		//set vars
+		String discordStore = getDiscordFile() + "/UnderCover/vars.properties";
+		String token = getToken(discordStore);
 
 		//make bot until it's made
 		while (bot == null) {
@@ -46,7 +44,7 @@ public class Main extends Application {
 
 				//if you fail to make the bot
 			}catch (LoginException e){
-				RefreshToken(DiscordStore);
+				RefreshToken(discordStore);
 
 
 			} catch (InterruptedException | RateLimitedException e) {
@@ -77,10 +75,9 @@ public class Main extends Application {
 		PrimaryStage.setWidth(500);
 
 		FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("Main.fxml"));
-		loader.setController(controller = new Controller());
+		loader.setController(new Controller());
 
 		PrimaryStage.setScene(loader.load());
-		loaded = true;
 		PrimaryStage.show();
 
 	}

@@ -1,0 +1,13 @@
+.scene {
+	-fx-background-color: #000;
+}
+
+.label {
+	-fx-text-fill: black;
+}
+
+.text-area {
+	-fx-background-color: transparent;
+	-fx-border-color: transparent;
+	-fx-focus-color: transparent;
+}
