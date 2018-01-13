@@ -57,6 +57,7 @@ public class Main extends Application {
 		bot.setAutoReconnect(true);
 
 		input = bot.getInput();
+		input.send("/channels");
 
 
 	}
